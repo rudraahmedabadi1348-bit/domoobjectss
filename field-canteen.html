@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Field Canteen — DOMO</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:        #2A3020;
+      --bg-card:   #353D28;
+      --text:      #E8ECD8;
+      --accent:    #A8C060;
+      --muted:     #788858;
+      --divider:   rgba(128,128,128,0.2);
+      --footer-bg: #181E12;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: 'Libre Baskerville', serif; min-height: 100vh; }
+
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 22px 48px;
+      background: color-mix(in srgb, #2A3020 92%, transparent);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--divider);
+    }
+    .brand {
+      font-family: 'Space Mono', monospace; font-size: 10px;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--text); line-height: 1.4; text-decoration: none;
+    }
+    .brand span {
+      display: block; font-family: 'Playfair Display', serif;
+      font-size: 22px; font-weight: 900; letter-spacing: 0.06em; line-height: 1;
+    }
+    .nav-links { display: flex; gap: 36px; list-style: none; }
+    .nav-links a {
+      font-family: 'Space Mono', monospace; font-size: 10px;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--text); text-decoration: none; opacity: 0.6; transition: opacity 0.2s;
+    }
+    .nav-links a:hover { opacity: 1; }
+
+    .breadcrumb {
+      padding: 110px 60px 0;
+      display: flex; align-items: center; gap: 10px;
+      font-family: 'Space Mono', monospace; font-size: 10px;
+      letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted);
+    }
+    .breadcrumb a { color: var(--muted); text-decoration: none; transition: color 0.2s; }
+    .breadcrumb a:hover { color: var(--text); }
+    .breadcrumb-sep { opacity: 0.4; }
+
+    .product-page {
+      display: grid; grid-template-columns: 1fr 1fr;
+      min-height: calc(100vh - 120px);
+      padding: 40px 60px 80px; gap: 80px;
+      align-items: start; max-width: 1300px; margin: 0 auto;
+    }
+    .product-info { padding-top: 40px; position: sticky; top: 100px; }
+    .product-category {
+      font-family: 'Space Mono', monospace; font-size: 10px;
+      letter-spacing: 0.3em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 16px;
+    }
+    .product-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(42px, 5vw, 72px); font-weight: 900;
+      line-height: 0.95; letter-spacing: -0.02em;
+      color: var(--text); margin-bottom: 8px;
+    }
+    .product-title em { font-style: italic; color: var(--accent); }
+    .product-subtitle {
+      font-family: 'Space Mono', monospace; font-size: 11px;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 36px;
+    }
+    .product-divider {
+      width: 48px; height: 2px;
+      background: var(--accent); margin-bottom: 32px;
+    }
+    .product-description {
+      font-size: 15px; line-height: 1.9;
+      color: var(--text); opacity: 0.85; margin-bottom: 28px;
+    }
+    .product-description p + p { margin-top: 18px; }
+    .product-details {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 16px 32px; margin-bottom: 48px;
+      padding: 28px 0;
+      border-top: 1px solid var(--divider);
+      border-bottom: 1px solid var(--divider);
+    }
+    .detail-label {
+      font-family: 'Space Mono', monospace; font-size: 9px;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 4px;
+    }
+    .detail-value {
+      font-family: 'Libre Baskerville', serif; font-size: 13px;
+      color: var(--text); font-weight: 700;
+    }
+    .product-purchase {
+      display: flex; align-items: center; gap: 32px; margin-top: 8px;
+    }
+    .product-price { display: flex; flex-direction: column; }
+    .price-label {
+      font-family: 'Space Mono', monospace; font-size: 9px;
+      letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 4px;
+    }
+    .price-amount {
+      font-family: 'Playfair Display', serif; font-size: 46px;
+      font-weight: 900; color: var(--text);
+      letter-spacing: -0.02em; line-height: 1;
+    }
+    .price-currency { font-size: 22px; vertical-align: super; font-weight: 400; }
+    .btn-add {
+      flex: 1; background: var(--accent); color: var(--bg);
+      border: none; padding: 18px 32px;
+      font-family: 'Space Mono', monospace; font-size: 11px;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      cursor: pointer; transition: opacity 0.2s, transform 0.2s;
+      position: relative; overflow: hidden;
+    }
+    .btn-add:hover { opacity: 0.88; transform: translateY(-2px); }
+    .btn-save {
+      background: transparent; border: 1.5px solid var(--divider);
+      padding: 18px 20px; cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      color: var(--text); font-size: 18px; line-height: 1;
+    }
+    .btn-save:hover { border-color: var(--accent); }
+
+    .product-visual { display: flex; flex-direction: column; gap: 20px; padding-top: 40px; }
+    .product-main-img {
+      background: var(--bg-card);
+      border: 1px solid var(--divider);
+      display: flex; align-items: center; justify-content: center;
+      padding: 60px; position: relative; overflow: hidden; aspect-ratio: 1 / 1;
+    }
+    .product-main-img::before {
+      content: ''; position: absolute; top: -60px; right: -60px;
+      width: 200px; height: 200px; border-radius: 50%;
+      background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+      opacity: 0.08;
+    }
+    .product-main-img img {
+      width: 100%; max-width: 360px; height: auto; object-fit: contain;
+      animation: floatImg 5s ease-in-out infinite;
+    }
+    @keyframes floatImg {
+      0%,100% { transform: translateY(0); }
+      50% { transform: translateY(-12px); }
+    }
+    .product-thumbs {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+    }
+    .product-thumb {
+      background: var(--bg-card); border: 1.5px solid var(--divider);
+      aspect-ratio: 1/1; display: flex; align-items: center;
+      justify-content: center; padding: 14px; cursor: pointer;
+      transition: border-color 0.2s;
+    }
+    .product-thumb:first-child { border-color: var(--accent); }
+    .product-thumb:hover { border-color: var(--accent); }
+    .product-thumb img {
+      width: 100%; height: 100%; object-fit: contain;
+      opacity: 0.6; transition: opacity 0.2s;
+    }
+    .product-thumb:first-child img, .product-thumb:hover img { opacity: 1; }
+
+    .product-story {
+      max-width: 1300px; margin: 0 auto; padding: 80px 60px;
+      display: grid; grid-template-columns: 1fr 2fr; gap: 60px;
+      border-top: 1px solid var(--divider);
+    }
+    .story-label {
+      font-family: 'Space Mono', monospace; font-size: 10px;
+      letter-spacing: 0.3em; text-transform: uppercase;
+      color: var(--muted); padding-top: 6px;
+    }
+    .story-body { font-size: 15px; line-height: 1.95; color: var(--text); opacity: 0.85; }
+    .story-body h3 {
+      font-family: 'Playfair Display', serif; font-size: 28px;
+      font-weight: 700; margin-bottom: 18px; color: var(--text); opacity: 1;
+    }
+    .story-body p + p { margin-top: 16px; }
+
+    footer {
+      background: var(--footer-bg); padding: 44px 60px 32px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .footer-brand {
+      font-family: 'Space Mono', monospace; font-size: 10px;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--muted); line-height: 1.6;
+    }
+    .footer-brand strong {
+      display: block; font-family: 'Playfair Display', serif;
+      font-size: 18px; font-weight: 900; color: var(--text);
+    }
+    .footer-back a {
+      font-family: 'Space Mono', monospace; font-size: 10px;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--muted); text-decoration: none;
+      transition: color 0.2s; display: flex; align-items: center; gap: 8px;
+    }
+    .footer-back a:hover { color: var(--text); }
+
+    @media (max-width: 900px) {
+      .product-page { grid-template-columns: 1fr; padding: 24px 24px 60px; gap: 40px; }
+      .product-info { position: static; padding-top: 0; }
+      .product-visual { padding-top: 0; }
+      .product-story { grid-template-columns: 1fr; padding: 48px 24px; }
+      nav { padding: 18px 24px; }
+      .breadcrumb { padding: 100px 24px 0; }
+    }
+
+    /* ── PREV / NEXT NAV ── */
+    .obj-nav {
+      position: fixed;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      transition: opacity 0.2s;
+      opacity: 0.55;
+    }
+    .obj-nav:hover { opacity: 1; }
+    .obj-nav.prev { left: 20px; }
+    .obj-nav.next { right: 20px; }
+    .obj-nav-arrow {
+      width: 48px; height: 48px;
+      border: 1.5px solid var(--accent);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--accent);
+      font-size: 20px;
+      background: var(--bg-card);
+      transition: background 0.2s, transform 0.2s;
+    }
+    .obj-nav:hover .obj-nav-arrow {
+      background: var(--accent);
+      color: var(--bg);
+      transform: scale(1.1);
+    }
+    .obj-nav-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 8px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      display: none;
+    }
+    .obj-nav:hover .obj-nav-label { display: block; }
+    @media (max-width: 700px) {
+      .obj-nav { display: none; }
+    }
+
+  </style>
+</head>
+<body>
+  <a href="typewriter.html" class="obj-nav prev" title="Previous object">
+    <div class="obj-nav-arrow">&#8592;</div>
+    <span class="obj-nav-label">Prev</span>
+  </a>
+  <a href="mantel-clock.html" class="obj-nav next" title="Next object">
+    <div class="obj-nav-arrow">&#8594;</div>
+    <span class="obj-nav-label">Next</span>
+  </a>
+
+  <nav>
+    <a href="index.html" class="brand">Department of<span>DOMO</span></a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="index.html#objects">Objects</a></li>
+      <li><a href="#">Login</a></li>
+    </ul>
+  </nav>
+
+  <div class="breadcrumb">
+    <a href="index.html">Home</a>
+    <span class="breadcrumb-sep">—</span>
+    <a href="index.html#objects">Objects</a>
+    <span class="breadcrumb-sep">—</span>
+    <span>Field Canteen</span>
+  </div>
+
+  <div class="product-page">
+    <div class="product-info">
+      <p class="product-category">Outdoors — Circa 1943</p>
+      <h1 class="product-title">Field<br><em>Canteen</em></h1>
+      <p class="product-subtitle">Model No. D.O.M.O-006</p>
+      <div class="product-divider"></div>
+      <div class="product-description">
+        <p>A US Army issue aluminum canteen from the Second World War, still in its original canvas cover with the metal clip intact.</p>
+        <p>The canteen holds water. The cover is faded but unfrayed. Small dents from field use tell the story better than any description could.</p>
+      </div>
+      <div class="product-details">
+        <div class="detail-item"><div class="detail-label">Era</div><div class="detail-value">WWII</div></div>
+        <div class="detail-item"><div class="detail-label">Material</div><div class="detail-value">Aluminum & Canvas</div></div>
+        <div class="detail-item"><div class="detail-label">Condition</div><div class="detail-value">Good</div></div>
+        <div class="detail-item"><div class="detail-label">Dimensions</div><div class="detail-value">19 × 13 × 7 cm</div></div>
+        <div class="detail-item"><div class="detail-label">Origin</div><div class="detail-value">United States</div></div>
+        <div class="detail-item"><div class="detail-label">Availability</div><div class="detail-value">1 in stock</div></div>
+      </div>
+      <div class="product-purchase">
+        <div class="product-price">
+          <span class="price-label">Price</span>
+          <span class="price-amount"><span class="price-currency">$</span>65</span>
+        </div>
+        <button class="btn-add">Add to Cart</button>
+        <button class="btn-save">♡</button>
+      </div>
+    </div>
+
+    <div class="product-visual">
+      <div class="product-main-img">
+        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cGF0aCBkPSJNMzQgMjIgaDMyIHY2IEgzNHogTTI4IDI4IGg0NCBRNzYgMjggNzYgNDYgdjM0IFE3NiA4NiA2NCA4OSBIMzYgUTI0IDg2IDI0IDc4IFY0NiBRMjQgMjggMjggMjh6IE0zOCA1NiBoMjQgTTM4IDY0IGgyNCBNNTAgMjIgdi04IiBzdHJva2U9IiNBOEMwNjAiIHN0cm9rZS13aWR0aD0iMy4yIiBmaWxsPSJub25lIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIG9wYWNpdHk9IjEuMCIvPjwvc3ZnPg==" alt="Field Canteen" id="mainImg"/>
+      </div>
+      <div class="product-thumbs">
+        <div class="product-thumb"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cGF0aCBkPSJNMzQgMjIgaDMyIHY2IEgzNHogTTI4IDI4IGg0NCBRNzYgMjggNzYgNDYgdjM0IFE3NiA4NiA2NCA4OSBIMzYgUTI0IDg2IDI0IDc4IFY0NiBRMjQgMjggMjggMjh6IE0zOCA1NiBoMjQgTTM4IDY0IGgyNCBNNTAgMjIgdi04IiBzdHJva2U9IiNBOEMwNjAiIHN0cm9rZS13aWR0aD0iMy4yIiBmaWxsPSJub25lIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIG9wYWNpdHk9IjEuMCIvPjwvc3ZnPg==" alt="View 1"/></div>
+        <div class="product-thumb"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cGF0aCBkPSJNMzQgMjIgaDMyIHY2IEgzNHogTTI4IDI4IGg0NCBRNzYgMjggNzYgNDYgdjM0IFE3NiA4NiA2NCA4OSBIMzYgUTI0IDg2IDI0IDc4IFY0NiBRMjQgMjggMjggMjh6IE0zOCA1NiBoMjQgTTM4IDY0IGgyNCBNNTAgMjIgdi04IiBzdHJva2U9IiNBOEMwNjAiIHN0cm9rZS13aWR0aD0iMy4yIiBmaWxsPSJub25lIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIG9wYWNpdHk9IjAuNyIvPjwvc3ZnPg==" alt="View 2"/></div>
+        <div class="product-thumb"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cGF0aCBkPSJNMzQgMjIgaDMyIHY2IEgzNHogTTI4IDI4IGg0NCBRNzYgMjggNzYgNDYgdjM0IFE3NiA4NiA2NCA4OSBIMzYgUTI0IDg2IDI0IDc4IFY0NiBRMjQgMjggMjggMjh6IE0zOCA1NiBoMjQgTTM4IDY0IGgyNCBNNTAgMjIgdi04IiBzdHJva2U9IiNBOEMwNjAiIHN0cm9rZS13aWR0aD0iMy4yIiBmaWxsPSJub25lIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIG9wYWNpdHk9IjAuNSIvPjwvc3ZnPg==" alt="View 3"/></div>
+        <div class="product-thumb"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cGF0aCBkPSJNMzQgMjIgaDMyIHY2IEgzNHogTTI4IDI4IGg0NCBRNzYgMjggNzYgNDYgdjM0IFE3NiA4NiA2NCA4OSBIMzYgUTI0IDg2IDI0IDc4IFY0NiBRMjQgMjggMjggMjh6IE0zOCA1NiBoMjQgTTM4IDY0IGgyNCBNNTAgMjIgdi04IiBzdHJva2U9IiNBOEMwNjAiIHN0cm9rZS13aWR0aD0iMy4yIiBmaWxsPSJub25lIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIG9wYWNpdHk9IjAuMzUiLz48L3N2Zz4=" alt="View 4"/></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="product-story">
+    <div class="story-label">The Story</div>
+    <div class="story-body">
+      <h3>Carried Across Two Continents.</h3>
+      <p>Military surplus canteens from this era are common. One in this condition — with matching cup, original cover, and no repairs — is not. This one came from an estate sale in rural Georgia, tucked in a footlocker alongside a Purple Heart.</p>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-brand">Department of<strong>DOMO</strong>© 2024</div>
+    <div class="footer-back"><a href="index.html">← Back to all objects</a></div>
+  </footer>
+
+  <script>
+    const thumbs = document.querySelectorAll('.product-thumb');
+    const mainImg = document.getElementById('mainImg');
+    thumbs.forEach(t => {
+      t.addEventListener('click', () => {
+        thumbs.forEach(x => x.style.borderColor = '');
+        t.style.borderColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+        mainImg.src = t.querySelector('img').src;
+      });
+    });
+  </script>
+
+  <script>
+    // Swipe / trackpad navigation
+    let touchStartX = 0;
+    let touchStartY = 0;
+
+    document.addEventListener('touchstart', e => {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+
+    document.addEventListener('touchend', e => {
+      const dx = e.changedTouches[0].clientX - touchStartX;
+      const dy = e.changedTouches[0].clientY - touchStartY;
+      if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
+        if (dx < 0) {
+          const n = document.querySelector('.obj-nav.next');
+          if (n) window.location.href = n.href;
+        } else {
+          const p = document.querySelector('.obj-nav.prev');
+          if (p) window.location.href = p.href;
+        }
+      }
+    }, { passive: true });
+
+    // Keyboard arrow keys
+    document.addEventListener('keydown', e => {
+      if (e.key === 'ArrowRight') {
+        const n = document.querySelector('.obj-nav.next');
+        if (n) window.location.href = n.href;
+      } else if (e.key === 'ArrowLeft') {
+        const p = document.querySelector('.obj-nav.prev');
+        if (p) window.location.href = p.href;
+      }
+    });
+  </script>
+
+</body>
+</html>

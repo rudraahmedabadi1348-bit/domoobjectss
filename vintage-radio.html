@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Vintage Radio — DOMO</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:       #2C1A0E;       /* deep tobacco brown */
+      --bg-card:  #3A2314;       /* slightly lighter for cards */
+      --text:     #F0E6D3;       /* warm cream */
+      --accent:   #D4883A;       /* burnished amber */
+      --muted:    #9A7A5A;       /* warm tan for muted text */
+      --divider:  rgba(212,136,58,0.25);
+      --light-gray: rgba(240,230,211,0.1);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Libre Baskerville', serif;
+      min-height: 100vh;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 22px 48px;
+      background: rgba(44,26,14,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(212,136,58,0.18);
+    }
+    .brand {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text);
+      line-height: 1.4;
+      text-decoration: none;
+    }
+    .brand span {
+      display: block;
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: 0.06em;
+      line-height: 1;
+    }
+    .nav-links { display: flex; gap: 36px; list-style: none; }
+    .nav-links a {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text);
+      text-decoration: none;
+      opacity: 0.6;
+      transition: opacity 0.2s;
+    }
+    .nav-links a:hover { opacity: 1; }
+
+    /* ── BREADCRUMB ── */
+    .breadcrumb {
+      padding: 110px 60px 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .breadcrumb a { color: var(--muted); text-decoration: none; transition: color 0.2s; }
+    .breadcrumb a:hover { color: var(--text); }
+    .breadcrumb-sep { opacity: 0.4; }
+
+    /* ── MAIN PRODUCT LAYOUT ── */
+    .product-page {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: calc(100vh - 120px);
+      padding: 40px 60px 80px;
+      gap: 80px;
+      align-items: start;
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+
+    /* LEFT — text side */
+    .product-info {
+      padding-top: 40px;
+      position: sticky;
+      top: 100px;
+    }
+
+    .product-category {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+
+    .product-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(42px, 5vw, 72px);
+      font-weight: 900;
+      line-height: 0.95;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+    .product-title em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .product-subtitle {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 36px;
+    }
+
+    .product-divider {
+      width: 48px;
+      height: 2px;
+      background: var(--accent);
+      margin-bottom: 32px;
+    }
+
+    .product-description {
+      font-size: 15px;
+      line-height: 1.9;
+      color: var(--text);
+      margin-bottom: 28px;
+    }
+
+    .product-description p + p { margin-top: 18px; }
+
+    .product-details {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px 32px;
+      margin-bottom: 48px;
+      padding: 28px 0;
+      border-top: 1px solid var(--divider);
+      border-bottom: 1px solid var(--divider);
+    }
+    .detail-item {}
+    .detail-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .detail-value {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 13px;
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    /* PRICE + CTA */
+    .product-purchase {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      margin-top: 8px;
+    }
+
+    .product-price {
+      display: flex;
+      flex-direction: column;
+    }
+    .price-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .price-amount {
+      font-family: 'Playfair Display', serif;
+      font-size: 46px;
+      font-weight: 900;
+      color: var(--text);
+      letter-spacing: -0.02em;
+      line-height: 1;
+    }
+    .price-currency {
+      font-size: 22px;
+      vertical-align: super;
+      font-weight: 400;
+    }
+
+    .btn-add {
+      flex: 1;
+      background: var(--accent);
+      color: #1A0E06;
+      border: none;
+      padding: 18px 32px;
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.25s, transform 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-add::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--text);
+      transform: translateX(-100%);
+      transition: transform 0.35s ease;
+      z-index: 0;
+    }
+    .btn-add:hover::after { transform: translateX(0); }
+    .btn-add span { position: relative; z-index: 1; }
+    .btn-add:hover { transform: translateY(-2px); color: #1A0E06; }
+
+    .btn-save {
+      background: transparent;
+      border: 1.5px solid var(--divider);
+      padding: 18px 20px;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      color: var(--text);
+      font-size: 18px;
+      line-height: 1;
+    }
+    .btn-save:hover { border-color: var(--accent); background: rgba(212,136,58,0.15); }
+
+    /* RIGHT — image side */
+    .product-visual {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      padding-top: 40px;
+    }
+
+    .product-main-img {
+      background: var(--bg-card);
+      border: 1px solid var(--divider);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 60px;
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 1 / 1;
+    }
+
+    .product-main-img::before {
+      content: '';
+      position: absolute;
+      top: -60px; right: -60px;
+      width: 200px; height: 200px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(212,136,58,0.18) 0%, transparent 70%);
+    }
+
+    .product-main-img img {
+      width: 100%;
+      max-width: 360px;
+      height: auto;
+      object-fit: contain;
+      animation: floatImg 5s ease-in-out infinite;
+      filter: drop-shadow(0 24px 48px rgba(0,0,0,0.12));
+    }
+
+    @keyframes floatImg {
+      0%,100% { transform: translateY(0); }
+      50%      { transform: translateY(-12px); }
+    }
+
+    /* Thumbnail strip */
+    .product-thumbs {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+    .product-thumb {
+      background: var(--bg-card);
+      border: 1.5px solid var(--divider);
+      aspect-ratio: 1/1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px;
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+    .product-thumb:first-child { border-color: var(--text); }
+    .product-thumb:hover { border-color: var(--accent); }
+    .product-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+    }
+    .product-thumb:first-child img,
+    .product-thumb:hover img { opacity: 1; }
+
+    /* ── STORY SECTION ── */
+    .product-story {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 80px 60px;
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 60px;
+      border-top: 1px solid var(--divider);
+    }
+    .story-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding-top: 6px;
+    }
+    .story-body {
+      font-size: 15px;
+      line-height: 1.95;
+      color: var(--text);
+    }
+    .story-body h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 18px;
+      color: var(--text);
+    }
+    .story-body p + p { margin-top: 16px; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: #1A0E06;
+      padding: 44px 60px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .footer-brand {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(240,230,211,0.45);
+      line-height: 1.6;
+    }
+    .footer-brand strong {
+      display: block;
+      font-family: 'Playfair Display', serif;
+      font-size: 18px;
+      font-weight: 900;
+      color: rgba(240,230,211,0.9);
+    }
+    .footer-back a {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(240,230,211,0.45);
+      text-decoration: none;
+      transition: color 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .footer-back a:hover { color: var(--bg); }
+
+    /* responsive */
+    @media (max-width: 900px) {
+      .product-page { grid-template-columns: 1fr; padding: 24px 24px 60px; gap: 40px; }
+      .product-info { position: static; padding-top: 0; }
+      .product-visual { padding-top: 0; }
+      .product-story { grid-template-columns: 1fr; padding: 48px 24px; }
+      nav { padding: 18px 24px; }
+      .breadcrumb { padding: 100px 24px 0; }
+    }
+
+    /* ── PREV / NEXT NAV ── */
+    .obj-nav {
+      position: fixed;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      transition: opacity 0.2s;
+      opacity: 0.55;
+    }
+    .obj-nav:hover { opacity: 1; }
+    .obj-nav.prev { left: 20px; }
+    .obj-nav.next { right: 20px; }
+    .obj-nav-arrow {
+      width: 48px; height: 48px;
+      border: 1.5px solid var(--accent);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--accent);
+      font-size: 20px;
+      background: var(--bg-card);
+      transition: background 0.2s, transform 0.2s;
+    }
+    .obj-nav:hover .obj-nav-arrow {
+      background: var(--accent);
+      color: var(--bg);
+      transform: scale(1.1);
+    }
+    .obj-nav-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 8px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      display: none;
+    }
+    .obj-nav:hover .obj-nav-label { display: block; }
+    @media (max-width: 700px) {
+      .obj-nav { display: none; }
+    }
+
+  </style>
+</head>
+<body>
+  <a href="analog-camera.html" class="obj-nav next" title="Next object">
+    <div class="obj-nav-arrow">&#8594;</div>
+    <span class="obj-nav-label">Next</span>
+  </a>
+
+  <!-- NAV -->
+  <nav>
+    <a href="index.html" class="brand">
+      Department of
+      <span>DOMO</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="index.html#objects">Objects</a></li>
+      <li><a href="#">Login</a></li>
+    </ul>
+  </nav>
+
+  <!-- BREADCRUMB -->
+  <div class="breadcrumb">
+    <a href="index.html">Home</a>
+    <span class="breadcrumb-sep">—</span>
+    <a href="index.html#objects">Objects</a>
+    <span class="breadcrumb-sep">—</span>
+    <span>Vintage Radio</span>
+  </div>
+
+  <!-- PRODUCT LAYOUT -->
+  <div class="product-page">
+
+    <!-- LEFT: Info -->
+    <div class="product-info">
+      <p class="product-category">Electronics — Circa 1952</p>
+      <h1 class="product-title">Vintage<br><em>Radio</em></h1>
+      <p class="product-subtitle">Model No. D.O.M.O-001</p>
+      <div class="product-divider"></div>
+
+      <div class="product-description">
+        <p>A beautifully preserved tabletop radio from the early 1950s, this piece carries the warmth of a time when families gathered around a single glowing dial. The walnut veneer cabinet is in remarkable condition, with only the softest patina that decades of careful ownership leaves behind.</p>
+        <p>The AM band still pulls in signal with surprising clarity. The original speaker cloth — a warm amber weave — is intact and undamaged. This is not a reproduction. This is the real thing.</p>
+      </div>
+
+      <div class="product-details">
+        <div class="detail-item">
+          <div class="detail-label">Era</div>
+          <div class="detail-value">Early 1950s</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Material</div>
+          <div class="detail-value">Walnut Veneer</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Condition</div>
+          <div class="detail-value">Excellent</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Dimensions</div>
+          <div class="detail-value">34 × 22 × 18 cm</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Origin</div>
+          <div class="detail-value">United States</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Availability</div>
+          <div class="detail-value">1 in stock</div>
+        </div>
+      </div>
+
+      <!-- PRICE + CTA -->
+      <div class="product-purchase">
+        <div class="product-price">
+          <span class="price-label">Price</span>
+          <span class="price-amount"><span class="price-currency">$</span>248</span>
+        </div>
+        <button class="btn-add"><span>Add to Cart</span></button>
+        <button class="btn-save" title="Save for later">♡</button>
+      </div>
+    </div>
+
+    <!-- RIGHT: Visual -->
+    <div class="product-visual">
+      <div class="product-main-img">
+        <img
+          src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cGF0aCBkPSJNMjAgNjIgaDYwIHYyOCBIMjB6IE0yOCA3MiBhMTAgMTAgMCAxIDAgMjAgMCBhMTAgMTAgMCAxIDAtMjAgMCBNNjAgNzAgaDE0IE02MCA3OCBoMTQgTTYwIDg2IGgxNCBNMjIgNjIgVjQ4IFEyMiAzOCA1MCAzNiBRNzggMzggNzggNDggdjE0IE0zOCA0OCBoMjQgTTUwIDM2IHYtOCIgc3Ryb2tlPSIjRDQ4ODNBIiBzdHJva2Utd2lkdGg9IjMuMiIgZmlsbD0ibm9uZSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PC9zdmc+"
+          alt="Vintage Radio"
+        />
+      </div>
+
+      <!-- Thumbnails (same img, slight variation effect) -->
+      <div class="product-thumbs">
+        <div class="product-thumb">
+          <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cGF0aCBkPSJNMjAgNjIgaDYwIHYyOCBIMjB6IE0yOCA3MiBhMTAgMTAgMCAxIDAgMjAgMCBhMTAgMTAgMCAxIDAtMjAgMCBNNjAgNzAgaDE0IE02MCA3OCBoMTQgTTYwIDg2IGgxNCBNMjIgNjIgVjQ4IFEyMiAzOCA1MCAzNiBRNzggMzggNzggNDggdjE0IE0zOCA0OCBoMjQgTTUwIDM2IHYtOCIgc3Ryb2tlPSIjRDQ4ODNBIiBzdHJva2Utd2lkdGg9IjMuMiIgZmlsbD0ibm9uZSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PC9zdmc+" alt="Front view"/>
+        </div>
+        <div class="product-thumb">
+          <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cGF0aCBkPSJNMjAgNjIgaDYwIHYyOCBIMjB6IE0yOCA3MiBhMTAgMTAgMCAxIDAgMjAgMCBhMTAgMTAgMCAxIDAtMjAgMCBNNjAgNzAgaDE0IE02MCA3OCBoMTQgTTYwIDg2IGgxNCBNMjIgNjIgVjQ4IFEyMiAzOCA1MCAzNiBRNzggMzggNzggNDggdjE0IE0zOCA0OCBoMjQgTTUwIDM2IHYtOCIgc3Ryb2tlPSIjMWU0ZDhjIiBzdHJva2Utd2lkdGg9IjMuMiIgZmlsbD0ibm9uZSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PC9zdmc+" alt="Side view"/>
+        </div>
+        <div class="product-thumb">
+          <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cGF0aCBkPSJNMjAgNjIgaDYwIHYyOCBIMjB6IE0yOCA3MiBhMTAgMTAgMCAxIDAgMjAgMCBhMTAgMTAgMCAxIDAtMjAgMCBNNjAgNzAgaDE0IE02MCA3OCBoMTQgTTYwIDg2IGgxNCBNMjIgNjIgVjQ4IFEyMiAzOCA1MCAzNiBRNzggMzggNzggNDggdjE0IE0zOCA0OCBoMjQgTTUwIDM2IHYtOCIgc3Ryb2tlPSIjNDQ0IiBzdHJva2Utd2lkdGg9IjMuMiIgZmlsbD0ibm9uZSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PC9zdmc+" alt="Detail view"/>
+        </div>
+        <div class="product-thumb">
+          <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cGF0aCBkPSJNMjAgNjIgaDYwIHYyOCBIMjB6IE0yOCA3MiBhMTAgMTAgMCAxIDAgMjAgMCBhMTAgMTAgMCAxIDAtMjAgMCBNNjAgNzAgaDE0IE02MCA3OCBoMTQgTTYwIDg2IGgxNCBNMjIgNjIgVjQ4IFEyMiAzOCA1MCAzNiBRNzggMzggNzggNDggdjE0IE0zOCA0OCBoMjQgTTUwIDM2IHYtOCIgc3Ryb2tlPSIjMGQxYjJhIiBzdHJva2Utd2lkdGg9IjMuMiIgZmlsbD0ibm9uZSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PC9zdmc+" alt="Back view"/>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- OBJECT STORY -->
+  <div class="product-story">
+    <div class="story-label">The Story</div>
+    <div class="story-body">
+      <h3>Found in a Wisconsin Attic, 1952.</h3>
+      <p>Every object in the Department of Miscellaneous Objects comes with a provenance — a thread that connects the present to the moment it was made. This radio was discovered in a cedar-lined attic outside Madison, Wisconsin, packed in its original cardboard box alongside a stack of TV Guide magazines from the same decade.</p>
+      <p>The previous owner — a retired schoolteacher named Ruth — used it every evening to listen to baseball games and big band broadcasts. She kept meticulous notes in a small green ledger: which stations had the clearest signal, which dial positions to avoid on rainy nights. Those notes come with the radio.</p>
+      <p>Objects like this don't show up often. When they do, we believe they deserve to be in the hands of someone who will use them — not just display them.</p>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-brand">
+      Department of
+      <strong>DOMO</strong>
+      © 2024
+    </div>
+    <div class="footer-back">
+      <a href="index.html">← Back to all objects</a>
+    </div>
+  </footer>
+
+  <script>
+    // Thumbnail click — swap main image tint
+    const thumbs = document.querySelectorAll('.product-thumb');
+    const mainImg = document.querySelector('.product-main-img img');
+
+    thumbs.forEach((thumb, i) => {
+      thumb.addEventListener('click', () => {
+        thumbs.forEach(t => t.style.borderColor = '');
+        thumb.style.borderColor = '#0a0a0a';
+        mainImg.src = thumb.querySelector('img').src;
+      });
+    });
+  </script>
+
+
+  <script>
+    // Swipe / trackpad navigation
+    let touchStartX = 0;
+    let touchStartY = 0;
+
+    document.addEventListener('touchstart', e => {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+
+    document.addEventListener('touchend', e => {
+      const dx = e.changedTouches[0].clientX - touchStartX;
+      const dy = e.changedTouches[0].clientY - touchStartY;
+      if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
+        if (dx < 0) {
+          const n = document.querySelector('.obj-nav.next');
+          if (n) window.location.href = n.href;
+        } else {
+          const p = document.querySelector('.obj-nav.prev');
+          if (p) window.location.href = p.href;
+        }
+      }
+    }, { passive: true });
+
+    // Keyboard arrow keys
+    document.addEventListener('keydown', e => {
+      if (e.key === 'ArrowRight') {
+        const n = document.querySelector('.obj-nav.next');
+        if (n) window.location.href = n.href;
+      } else if (e.key === 'ArrowLeft') {
+        const p = document.querySelector('.obj-nav.prev');
+        if (p) window.location.href = p.href;
+      }
+    });
+  </script>
+
+</body>
+</html>
